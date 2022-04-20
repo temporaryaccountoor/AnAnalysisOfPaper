@@ -16,6 +16,7 @@ from data.cifar import ImbCIFAR10, ImbCIFAR100
 import torchvision.transforms as transforms
 import torchvision.datasets as datasets
 
+from norm import pNorm
 
 parser = argparse.ArgumentParser(description='Robust loss for learning with noisy labels')
 parser.add_argument('--dataset', type=str, default="CIFAR100", metavar='DATA', help='Dataset name (default: CIFAR10)')
@@ -151,7 +152,6 @@ for criterion, label in zip(criterions, labels):
         optimizer = torch.optim.SGD(model.parameters(), lr=lr, momentum=0.9, weight_decay=weight_decay)
         scheduler = CosineAnnealingLR(optimizer, T_max=epochs, eta_min=0.0)
         norm = pNorm(p=p)
-        norm2 = pNorm(########################
         for ep in range(epochs):
             model.train()
             total_loss = 0.
@@ -163,7 +163,7 @@ for criterion, label in zip(criterions, labels):
                 if label.endswith('+SR'):
                     if is_norm:
                         out = F.normalize(out, dim=1)
-                    loss = criterion(out / tau, batch_y) + lamb * norm(out / tau) - 
+                    loss = criterion(out / tau, batch_y) + lamb * norm(out / tau) 
                 else:
                     loss = criterion(out, batch_y)
                 loss.backward()
